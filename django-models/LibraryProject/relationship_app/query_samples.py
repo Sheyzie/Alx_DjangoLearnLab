@@ -4,10 +4,28 @@ List all books in a library.
 Retrieve the librarian for a library.
 '''
 
-from .models import Book, Library
+from relationship_app.models import Author, Book, Library, Librarian
 
-book = Book.objects.get(author__name='John')
+# Query 1: All books by a specific author
+def books_by_author(author_name):
+    try:
+        author = Author.objects.get(name=author_name)
+        return author.books.all()
+    except Author.DoesNotExist:
+        return []
 
-book_list = Library.objects.get(name=library_name)
+# Query 2: List all books in a library
+def books_in_library(library_name):
+    try:
+        library = Library.objects.get(name=library_name)
+        return library.books.all()
+    except Library.DoesNotExist:
+        return []
 
-librarian = Library.objects.get(librarian__name='John')
+# Query 3: Retrieve the librarian for a library
+def librarian_of_library(library_name):
+    try:
+        library = Library.objects.get(name=library_name)
+        return library.librarian
+    except (Library.DoesNotExist, Librarian.DoesNotExist):
+        return None
