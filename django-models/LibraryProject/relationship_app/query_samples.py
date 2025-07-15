@@ -8,6 +8,6 @@ from .models import Book, Library
 
 book = Book.objects.get(author__name='John')
 
-book_list = Book.objects.get(library__name='Library')
+book_list = Library.objects.get(name=library_name)
 
 librarian = Library.objects.get(librarian__name='John')
