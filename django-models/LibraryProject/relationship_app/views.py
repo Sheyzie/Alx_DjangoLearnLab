@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import DetailView
-from .models import Book, Library
+from .models import Library, Book
 
 # Create your views here.
 def all_books(request):
@@ -9,7 +9,7 @@ def all_books(request):
     render(request, 'relationship_app/list_books.html', context)
 
 class LibraryDetailView(DetailView):
-    template_name = 'llibrary_detail.html'
+    template_name = 'relationship_app/library_detail.html'
     model = Library
 
     def get_context_data(self, **kwargs):
