@@ -1,18 +1,24 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test, login_required
-from django.contrib.auth.models import User
-from .models import UserProfile
+# from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
+
+from .models import Librarian
 
 
 def admin_check(user):
     return user.is_authenticated and user.role == 'Admin'
 
-@login_required
-@user_passes_test(admin_check)
-def admin_view(request, id):
-    admin = UserProfile.objects.get(user=id)
-    context = {'admin': admin}
-    render(request, 'admin_view.html', context)
+@method_decorator(user_passes_test(admin_check), name='dispatch')
+class AdminView(LoginRequiredMixin, ListView):
+    template_name = 'admin_view.html'
+    model = Librarian
+    context_object_name = 'librarian_list'
+
+    
+        
+    
     
 
 

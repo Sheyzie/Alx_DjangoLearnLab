@@ -1,14 +1,24 @@
-from django.shortcuts import render
+# from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
+
+from .models import library
 
 
-def librarian_check(user):
+def admin_check(user):
     return user.is_authenticated and user.role == 'Librarian'
 
-@user_passes_test(librarian_check)
-def librarian_view(request, id):
-    librarian = User.objects.get(id=id)
-    context = {'librarian': librarian}
-    render(request, 'librarian_view.html', context)
+@method_decorator(user_passes_test(admin_check), name='dispatch')
+class LibrarianView(LoginRequiredMixin, ListView):
+    template_name = 'librarian_view.html'
+    model = library
+    context_object_name = 'library_list'
+
+    
+        
+    
+    
+
 
