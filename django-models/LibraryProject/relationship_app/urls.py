@@ -14,7 +14,7 @@ urlpatterns = [
     path('signup/', views.register, name='register'),
     path('view/admin/', admin_view.admin_view, name='admin_view'),
     # path('view/admin/', admin_view.AdminView.as_view(), name='admin_view'),
-    path('view/librarian/', librarian_view.LibrarianView.as_view(), name='librarian_view'),
-    path('view/member/<int:id>', member_view.MemberView.as_view(), name='member_view'),
+    path('view/librarian/', librarian_view.librarian_view, name='librarian_view'),
+    path('view/member/<int:id>', member_view.member_view, name='member_view'),
 
 ]

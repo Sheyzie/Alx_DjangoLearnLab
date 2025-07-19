@@ -1,15 +1,23 @@
 from django.shortcuts import render, redirect
+
 from django.contrib.auth import login, authenticate
-from django.urls import reverse_lazy
+from django.contrib.auth.forms import UserCreationForm
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test, login_required
+
 from django.views.generic import CreateView
 from django.views.generic.detail import DetailView
-from django.contrib.auth.forms import UserCreationForm
-from .forms import AuthorForm, LibrarianForm, LibraryForm, BookForm, CustomUserCreationForm
+
+from django.urls import reverse_lazy
 from django.contrib import messages
+
+from .forms import AuthorForm, LibrarianForm, LibraryForm, BookForm, CustomUserCreationForm
 from .models import Library, Book, UserProfile
+from .views.member_view import is_member
 
 
-# Create your views here.
+@login_required
+@user_passes_test(is_member)
 def list_books(request):
     username = request.POST["username"]
     password = request.POST["password"]
@@ -22,6 +30,8 @@ def list_books(request):
         context = {'Error': 'User not logged in'}
     render(request, 'relationship_app/list_books.html', context)
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(is_member), name='dispatch')
 class LibraryDetailView(DetailView):
     template_name = 'relationship_app/library_detail.html'
     model = Library
