@@ -8,7 +8,7 @@ from ..models import Librarian, library, Book, Author
 
 
 def is_admin(user):
-    return user.is_authenticated and user.role == 'Admin'
+    return user.role == 'Admin'
 
 # @method_decorator(login_required, name='dispatch')
 # @method_decorator(user_passes_test(admin_check), name='dispatch')
