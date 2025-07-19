@@ -12,12 +12,10 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 
 from .forms import AuthorForm, LibrarianForm, LibraryForm, BookForm, CustomUserCreationForm
-from .models import Library, Book, UserProfile
-from .views.member_view import is_member
+from .models import Librarian, library, Book, Author, UserProfile
+from .views import member_view, admin_view, librarian_view
 
 
-@login_required
-@user_passes_test(is_member)
 def list_books(request):
     username = request.POST["username"]
     password = request.POST["password"]
@@ -30,8 +28,6 @@ def list_books(request):
         context = {'Error': 'User not logged in'}
     render(request, 'relationship_app/list_books.html', context)
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(is_member), name='dispatch')
 class LibraryDetailView(DetailView):
     template_name = 'relationship_app/library_detail.html'
     model = Library
@@ -56,9 +52,41 @@ def register(request):
     return render(request, 'myapp/signup.html', {'form': form})
 
 
-# class SignUpView(CreateView):
-#     form_class = UserCreationForm
-#     success_url = reverse_lazy('login')
-#     template_name = 'relationship_app/register.html'
+@login_required
+@user_passes_test(admin_view.is_admin)
+def admin_view(request):
+    books = Book.objects.all()
+    authors = Author.objects.all()
+    librarians = Librarian.objects.all()
+    context = {
+        'books': books,
+        'authors': authors,
+        'librarians': librarians,
+    }
+    return render(request, 'relationship_app/admin_view.html', context)
  
+@login_required
+@user_passes_test(librarian_view.is_librarian)
+def librarian_view(request):
+    books = Book.objects.all()  
+    authors = Author.objects.all()
+    librarians = Librarian.objects.all()
+    context = {
+        'books': books,
+        'authors': authors,
+        'librarians': librarians,
+    }
+    return render(request, 'relationship_app/librarian_view.html', context)
 
+@login_required
+@user_passes_test(member_view.is_member)
+def member_view(request):
+    books = Book.objects.all()  
+    authors = Author.objects.all()
+    librarians = Librarian.objects.all()
+    context = {
+        'books': books,
+        'authors': authors,
+        'librarians': librarians,
+    }
+    return render(request, 'relationship_app/librarian_view.html', context) 

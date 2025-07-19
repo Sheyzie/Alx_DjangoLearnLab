@@ -17,18 +17,18 @@ def is_admin(user):
 #     model = Librarian
 #     context_object_name = 'librarian_list'
 
-@login_required
-@user_passes_test(is_admin)
-def admin_view(request):
-    books = Book.objects.all()
-    authors = Author.objects.all()
-    librarians = Librarian.objects.all()
-    context = {
-        'books': books,
-        'authors': authors,
-        'librarians': librarians,
-    }
-    return render(request, 'admin_view.html', context)
+# @login_required
+# @user_passes_test(is_admin)
+# def admin_view(request):
+#     books = Book.objects.all()
+#     authors = Author.objects.all()
+#     librarians = Librarian.objects.all()
+#     context = {
+#         'books': books,
+#         'authors': authors,
+#         'librarians': librarians,
+#     }
+#     return render(request, 'admin_view.html', context)
 
 
         
