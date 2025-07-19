@@ -2,7 +2,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path, include
 
 from . import views
-from . import admin_view, librarian_view, member_view
+from .view import admin_view, librarian_view, member_view
 from .views import list_books, LibraryDetailView
 
 
