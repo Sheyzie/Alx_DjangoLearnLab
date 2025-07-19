@@ -89,4 +89,4 @@ def member_view(request):
         'authors': authors,
         'librarians': librarians,
     }
-    return render(request, 'relationship_app/librarian_view.html', context) 
+    return render(request, 'relationship_app/member_view.html', context) 
