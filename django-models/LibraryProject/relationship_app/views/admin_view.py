@@ -1,9 +1,9 @@
-# from django.shortcuts import render
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.views.generic import ListView
 
-from .models import Librarian
+from ..models import Librarian
 
 
 def admin_check(user):
@@ -14,9 +14,13 @@ def admin_check(user):
 class AdminView(ListView):
     template_name = 'admin_view.html'
     model = Librarian
-    context_object_name = 'librarian_list'
+    # context_object_name = 'librarian_list'
 
-    
+# @login_required
+# @user_passes_test(admin_check)
+# def admin_view(request):
+
+
         
     
     
