@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views.generic.detail import DetailView
+from django.contrib.auth.forms import UserCreationForm
 from .forms import AuthorForm, LibrarianForm, LibraryForm, BookForm, CustomUserCreationForm
 from django.contrib import messages
 from .models import Library, Book, UserProfile
@@ -27,7 +28,7 @@ class LibraryDetailView(DetailView):
 
 def register(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             username = form.cleaned_data.get('username')
@@ -41,7 +42,7 @@ def register(request):
             messages.success(request, f'Account created for {username}! You can now log in.')
             return redirect(reverse_lazy('login')) # Redirect to your login page
     else:
-        form = CustomUserCreationForm()
+        form = UserCreationForm()
     return render(request, 'myapp/signup.html', {'form': form})
 
 
