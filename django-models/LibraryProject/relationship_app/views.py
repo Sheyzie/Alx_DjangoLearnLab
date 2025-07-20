@@ -11,7 +11,7 @@ from django.views.generic.detail import DetailView
 from django.urls import reverse_lazy
 from django.contrib import messages
 
-from .models import Librarian, library, Book, Author, UserProfile
+from .models import Librarian, Library, Book, Author, UserProfile
 from .views import member_view, admin_view, librarian_view
 
 
