@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.models import Permission
+from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
 
 from django.views.generic import CreateView
 from django.views.generic.detail import DetailView
@@ -11,7 +11,6 @@ from django.views.generic.detail import DetailView
 from django.urls import reverse_lazy
 from django.contrib import messages
 
-from .forms import AuthorForm, LibrarianForm, LibraryForm, BookForm, CustomUserCreationForm
 from .models import Librarian, library, Book, Author, UserProfile
 from .views import member_view, admin_view, librarian_view
 
@@ -45,6 +44,14 @@ def register(request):
             role = form.cleaned_data['role']
             UserProfile.objects.filter(user=user).update(role=role)
 
+            # giving permisions to user
+            if role == 'Admin':
+                permission = Permission.objects.get(codename='can_delete_book')
+            elif role == 'Librarian':
+                permission = Permission.objects.get(codename='can_change_book')
+            elif role == 'Member':
+                permission = Permission.objects.get(codename='can_add_book')               
+            user.user_permissions.add(permission)
             messages.success(request, f'Account created for {username}! You can now log in.')
             return redirect(reverse_lazy('login')) # Redirect to your login page
     else:
@@ -54,6 +61,7 @@ def register(request):
 
 @login_required
 @user_passes_test(admin_view.is_admin)
+@permission_required('relationship_app.can_delete_book')
 def admin_view(request):
     books = Book.objects.all()
     authors = Author.objects.all()
@@ -67,6 +75,8 @@ def admin_view(request):
  
 @login_required
 @user_passes_test(librarian_view.is_librarian)
+@user_passes_test(admin_view.is_admin)
+@permission_required('relationship_app.can_change_book')
 def librarian_view(request):
     books = Book.objects.all()  
     authors = Author.objects.all()
@@ -80,6 +90,7 @@ def librarian_view(request):
 
 @login_required
 @user_passes_test(member_view.is_member)
+@permission_required('relationship_app.can_add_book')
 def member_view(request):
     books = Book.objects.all()  
     authors = Author.objects.all()
