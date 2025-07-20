@@ -56,7 +56,7 @@ def register(request):
             return redirect(reverse_lazy('login')) # Redirect to your login page
     else:
         form = UserCreationForm()
-    return render(request, 'myapp/signup.html', {'form': form})
+    return render(request, 'relationship_app/register.html', {'form': form})
 
 
 @login_required
