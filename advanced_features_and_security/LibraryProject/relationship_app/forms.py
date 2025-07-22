@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Author, Librarian, Library, Book, UserProfile
 
+
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
