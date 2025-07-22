@@ -101,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'relationship_app.CustomUserModel'
+AUTH_USER_MODEL = 'bookshelf.CustomUserModel'
 
 
 # Internationalization
