@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 # Create your models here.
 
-class UserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
     # method to handle user creation
     def create_user(self, username, first_name, last_name, email, password=None):
         if not username:
