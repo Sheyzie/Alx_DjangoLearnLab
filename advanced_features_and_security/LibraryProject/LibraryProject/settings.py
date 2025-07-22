@@ -135,17 +135,25 @@ LOGIN_REDIRECT_URL = "/login"
 LOGOUT_REDIRECT_URL = "/login"
 
 # Protect against XSS attacks
+# enable the browser’s XSS filtering and help prevent cross-site scripting attacks
 SECURE_BROWSER_XSS_FILTER = True
 
 # Completely deny framing (most secure):
+# To prevent your site from being framed and protect against clickjacking
 X_FRAME_OPTIONS = 'DENY'
 
 # Protect your site against MIME-type sniffing attacks
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Enforce that cookies are sent over HTTPS only
+# Ensure session cookies are only transmitted over HTTPS.
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+# To redirect all non-HTTPS requests to HTTPS.
+SECURE_SSL_REDIRECT = True
+
+# Instruct browsers to only access the site via HTTPS for 1 year
+SECURE_HSTS_SECONDS = 31536000
 
 '''
 This configuration:
@@ -163,4 +171,6 @@ CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
 CSP_IMG_SRC = ("'self'", "data:")
 CSP_CONNECT_SRC = ("'self'",)
 CSP_FRAME_SRC = ("'none'",)
+
+
 
