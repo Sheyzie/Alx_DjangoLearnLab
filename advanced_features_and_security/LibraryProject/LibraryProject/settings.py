@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-e*=6y*ucna6pn$*sqf%cg+m+#qdvd^ty^2$*xb43&(t81pimxn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -42,8 +42,12 @@ INSTALLED_APPS = [
     'relationship_app.apps.RelationshipAppConfig'
 ]
 
+# Adding Django CSP  to installed apps
+INSTALLED_APPS += ['csp']
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -129,3 +133,34 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "/login"
 LOGOUT_REDIRECT_URL = "/login"
+
+# Protect against XSS attacks
+SECURE_BROWSER_XSS_FILTER = True
+
+# Completely deny framing (most secure):
+X_FRAME_OPTIONS = 'DENY'
+
+# Protect your site against MIME-type sniffing attacks
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enforce that cookies are sent over HTTPS only
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+'''
+This configuration:
+
+Only allows scripts/styles from your own domain and trusted CDNs.
+
+Blocks inline JavaScript (unless 'unsafe-inline' is used — not recommended).
+
+Blocks all frames from embedding your site.
+'''
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "https://cdn.jsdelivr.net", "https://ajax.googleapis.com")
+CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_CONNECT_SRC = ("'self'",)
+CSP_FRAME_SRC = ("'none'",)
+
