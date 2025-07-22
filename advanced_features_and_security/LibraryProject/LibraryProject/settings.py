@@ -154,6 +154,7 @@ SECURE_SSL_REDIRECT = True
 
 # Instruct browsers to only access the site via HTTPS for 1 year
 SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 '''
 This configuration:
