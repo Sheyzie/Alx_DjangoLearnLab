@@ -157,6 +157,17 @@ SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 '''
+This tells Django:
+
+tells Django how to determine if a request is secure (i.e., HTTPS) when it's behind a proxy.
+
+Look at the header X-Forwarded-Proto (available as HTTP_X_FORWARDED_PROTO in request.META)
+
+If its value is 'https', treat the request as secure.
+'''
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+'''
 This configuration:
 
 Only allows scripts/styles from your own domain and trusted CDNs.
