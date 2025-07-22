@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 # from django.views.generic import ListView
 from relationship_app.utils import is_admin
 
-from ..models import Librarian, library, Book, Author
+# from ..models import Librarian, Library, Book, Author
 
 
 def is_admin(user):
-    return user.role == 'Admin'
+    return user.userprofile.role == 'Admin'
 
 # @method_decorator(login_required, name='dispatch')
 # @method_decorator(user_passes_test(admin_check), name='dispatch')

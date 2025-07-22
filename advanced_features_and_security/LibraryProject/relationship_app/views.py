@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import Permission
+# from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import permission_required, user_passes_test, login_required
 
 from django.views.generic import CreateView
@@ -12,7 +12,9 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 
 from .models import Library, Librarian, Book, Author, UserProfile
-from .views import member_view, admin_view, librarian_view
+from .view import members_view, admins_view, librarians_view
+
+from bookshelf.group_permissions import create_group_permission
 
 
 def list_books(request):
@@ -46,12 +48,12 @@ def register(request):
 
             # giving permisions to user
             if role == 'Admin':
-                permission = Permission.objects.get(codename='can_delete_book')
+                group = create_group_permission('Admins')
             elif role == 'Librarian':
-                permission = Permission.objects.get(codename='can_change_book')
+                group = create_group_permission('Editors')
             elif role == 'Member':
-                permission = Permission.objects.get(codename='can_add_book')               
-            user.user_permissions.add(permission)
+                group = create_group_permission('Viewers')             
+            user.group.add(group)
             messages.success(request, f'Account created for {username}! You can now log in.')
             return redirect(reverse_lazy('login')) # Redirect to your login page
     else:
@@ -60,8 +62,11 @@ def register(request):
 
 
 @login_required
-@user_passes_test(admin_view.is_admin)
-@permission_required('relationship_app.can_delete_book')
+@user_passes_test(admins_view.is_admin)
+@permission_required('bookshelf.can_delete', raise_exception=True)
+@permission_required('bookshelf.can_create', raise_exception=True)
+@permission_required('bookshelf.can_edit', raise_exception=True)
+@permission_required('bookshelf.can_view', raise_exception=True)
 def admin_view(request):
     books = Book.objects.all()
     authors = Author.objects.all()
@@ -74,9 +79,9 @@ def admin_view(request):
     return render(request, 'relationship_app/admin_view.html', context)
  
 @login_required
-@user_passes_test(librarian_view.is_librarian)
-@user_passes_test(admin_view.is_admin)
-@permission_required('relationship_app.can_change_book')
+@user_passes_test(librarians_view.is_librarian)
+@permission_required('bookshelf.can_create', raise_exception=True)
+@permission_required('bookshelf.can_edit', raise_exception=True)
 def librarian_view(request):
     books = Book.objects.all()  
     authors = Author.objects.all()
@@ -89,8 +94,8 @@ def librarian_view(request):
     return render(request, 'relationship_app/librarian_view.html', context)
 
 @login_required
-@user_passes_test(member_view.is_member)
-@permission_required('relationship_app.can_add_book')
+@user_passes_test(members_view.is_member)
+@permission_required('bookshelf.can_view', raise_exception=True)
 def member_view(request):
     books = Book.objects.all()  
     authors = Author.objects.all()
@@ -102,14 +107,19 @@ def member_view(request):
     }
     return render(request, 'relationship_app/member_view.html', context) 
 
-@permission_required('relationship_app.can_add_book')
+@permission_required('bookshelf.can_create', raise_exception=True)
+@permission_required('bookshelf.can_edit', raise_exception=True)
 def add_book(request):
     return render(request, 'relationship_app/add_book.html')
 
-@permission_required('relationship_app.can_change_book')
+@permission_required('bookshelf.can_create', raise_exception=True)
+@permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request):
     return render(request, 'relationship_app/edit_book.html')
 
-@permission_required('relationship_app.can_delete_book')
+@permission_required('bookshelf.can_delete', raise_exception=True)
+@permission_required('bookshelf.can_create', raise_exception=True)
+@permission_required('bookshelf.can_edit', raise_exception=True)
+@permission_required('bookshelf.can_view', raise_exception=True)
 def delete_book(request):
     return render(request, 'relationship_app/delete_book.html')

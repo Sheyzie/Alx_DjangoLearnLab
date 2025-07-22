@@ -59,12 +59,15 @@ class Book(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
     class Meta:
-        permissions = ('can_add_book', 'can_change_book', 'can_delete_book')
+        permissions = [
+            ('can_add_book', 'Can Add Book'),
+            ('can_change_book', 'Can Change Book')
+        ]
 
     def __str__(self):
         return self.title
 
-class library(models.Model):
+class Library(models.Model):
     name = models.CharField(max_length=100)
     book = models.ManyToManyField(Book)
 
@@ -73,14 +76,20 @@ class library(models.Model):
 
 class Librarian(models.Model):
     name = models.CharField(max_length=100)
-    labrary = models.OneToOneField(library, on_delete=models.CASCADE)
+    labrary = models.OneToOneField(Library, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
     
 class UserProfile(models.Model):
+    ROLE_CHOICES = [
+        ('Admin', 'Admin'),
+        ('Librarian', 'Librarian'),
+        ('Member', 'Member')
+    ]
+
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    role = models.CharField(choices=('Admin', 'Librarian', 'Member'))
+    role = models.CharField(choices=ROLE_CHOICES)
 
     def __str__(self):
         return self.user.username
