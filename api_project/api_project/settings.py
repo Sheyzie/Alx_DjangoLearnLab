@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    'rest_framework', # Django Rest Framwork for creating APIs
+    'rest_framework.authtoken', # Authentication to control access via token
     'api',
 ]
 
@@ -99,6 +100,19 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Setup For Rest Framework Authentication
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # token based auth
+        'rest_framework.authentication.TokenAuthentication',
+        # # session based auth
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+        # # jwt based auth (pip install djangorestframework-simplejwt)
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
 
 
 # Internationalization
