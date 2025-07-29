@@ -104,6 +104,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Setup For Rest Framework Authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        # permissions to ensure user is authenticated
+        'rest_framework.permissions.IsAuthenticated',
         # token based auth
         'rest_framework.authentication.TokenAuthentication',
         # # session based auth
