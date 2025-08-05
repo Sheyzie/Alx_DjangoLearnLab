@@ -1,4 +1,6 @@
 from django.test import TestCase
+from rest_framework.test import APITestCase
+from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from django.contrib.auth import get_user_model
 from .models import Author, Book
@@ -6,7 +8,7 @@ from .views import BookListView, BookDetailView, BookCreateView, BookUpdateView,
 
 
 # Create your tests here.
-class BookAPITest(TestCase):
+class BookAPITest(APITestCase):
     def setUp(self):
         self.username = 'SampleUser'
         self.email = 'sample_user@mail.com'
