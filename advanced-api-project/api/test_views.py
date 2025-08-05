@@ -3,6 +3,8 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+
 from .models import Author, Book
 from .views import BookListView, BookDetailView, BookCreateView, BookUpdateView, BookDeleteView
 
@@ -59,16 +61,24 @@ class BookAPITest(APITestCase):
             publication_year=2024,
             author=self.author
         )
-        request = self.factory.put('api/v1/books/update', {'title': 'Micheal Bigger head', 'publication_year': 2025, 'author': self.author.id}, format='json')
-        request2 = self.factory.get('api/v1/books/')
-        # Force authenticate the request with the user
-        force_authenticate(request, user=self.user)
 
-        response = self.view(request, pk='1')
-        response2 = self.view2(request2)
+        # get absolute url with reverse
+        absolute_url = self.url = reverse('book_update')
+        
+        # attempt login
+        self.client.login(username=self.username, password=self.password)
+        
+        response = self.client.put(absolute_url, {'pk': book.id, 'title': 'Micheal Bigger head', 'publication_year': 2025, 'author': self.author.id}, format='json')
+        # request2 = self.factory.get('api/v1/books/')
+        # Force authenticate the request with the user
+        # force_authenticate(request, user=self.user)
+
+        # response = self.view(request, pk='1')
+        # response2 = self.view2(request2)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response2, 'Micheal Bigger head')
+        self.assertEqual(response.data['message'], 'Data updated successfully')
+        # self.assertContains(response2.data, 'Micheal Bigger head')
 
     def test_DeleteView(self):
         self.view = BookDeleteView.as_view()

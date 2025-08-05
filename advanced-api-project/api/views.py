@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import filters
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import status
+
 from django_filters import rest_framework
+
 from .serializers import BookSerializer, AuthorSerializer
 from .models import Book, Author
 from .filters import BookFilter
@@ -49,6 +53,22 @@ class BookUpdateView(generics.UpdateAPIView):
     serializer_class = BookSerializer
 
     permission_classes = [IsAuthenticated]
+
+
+    def put(self, request):
+        pk = request.data.get('pk')
+        if not pk:
+            return Response({"error": "pk is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            book = Book.objects.get(pk=pk)
+        except Book.DoesNotExist:
+            return Response({"error": "Object not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        book.title = request.data.get('name', book.title)
+        book.save()
+        return Response({"message": "Data updated successfully"}, status=status.HTTP_200_OK)
+
 
 # for delete view
 class BookDeleteView(generics.DestroyAPIView):
