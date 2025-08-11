@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Register</h2>
+<form method="post">
+    {% csrf_token %}
+    
+    <!-- Show form-wide errors -->
+    {% if form.non_field_errors %}
+        <div class="error">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Loop through each form field -->
+    {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            {{ field }}
+            
+            <!-- Field-specific errors -->
+            {% if field.errors %}
+                <div class="error">
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <button type="submit">Register</button>
+</form>
+
+<p>Already have an account? <a href="{% url login %}">Login</a></p>
+
+{% endblock %}

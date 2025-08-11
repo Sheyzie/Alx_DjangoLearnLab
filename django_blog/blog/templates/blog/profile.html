@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>User Profile</h2>
+
+<p><strong>Username:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+<p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+
+{% if user.first_name %}
+    <p><strong>Full Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+{% endif %}
+
+<a href="{% url 'edit_profile' %}">Edit Profile</a>
+
+{% endblock %}

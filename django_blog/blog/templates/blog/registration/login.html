@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Login</h2>
+
+{% if form.errors %}
+    <div class="error">
+        <p>Invalid username or password.</p>
+    </div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    
+    {{ form.non_field_errors }}
+    
+    <div>
+        <label for="id_username">Username:</label>
+        {{ form.username }}
+    </div>
+
+    <div>
+        <label for="id_password">Password:</label>
+        {{ form.password }}
+    </div>
+
+    <button type="submit">Login</button>
+</form>
+
+<p>Don't have an account? <a href="{% url register %}">Register</a></p>
+{% endblock %}
