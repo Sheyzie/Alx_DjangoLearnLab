@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Post deleted.</h2>
+<p>You can <a href="{% url 'post_create %}">create new post here</a></p>
+
+<br><br>
+  <a href="{% url 'post_list' %}">Back to Posts</a>
+
+{% endblock %}

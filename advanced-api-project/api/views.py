@@ -65,7 +65,7 @@ class BookUpdateView(generics.UpdateAPIView):
         except Book.DoesNotExist:
             return Response({"error": "Object not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        book.title = request.data.get('name', book.title)
+        book.title = request.data.get('title', book.title)
         book.save()
         return Response({"message": "Data updated successfully"}, status=status.HTTP_200_OK)
 

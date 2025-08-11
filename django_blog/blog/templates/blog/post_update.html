@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Update Post</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Post</button>
+</form>
+<br><br>
+  <a href="{% url 'post_list' %}">Back to Posts</a>
+
+{% endblock %}
