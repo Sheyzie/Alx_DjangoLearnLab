@@ -30,7 +30,7 @@ class PostUpdateForm(forms.ModelForm):
         model = Post
         field = ("title", "content", 'tags')
         widgets = {
-            'tags': TagWidget(attrs={'class': 'form-control'}),
+            'tags': TagWidget(),
         }
 
 class CommentForm(forms.ModelForm):
@@ -38,5 +38,5 @@ class CommentForm(forms.ModelForm):
         model = Comment
         field = ("content")
         widgets = {
-            'tags': TagWidget(attrs={'class': 'form-control'}),
+            'tags': TagWidget(),
         }
