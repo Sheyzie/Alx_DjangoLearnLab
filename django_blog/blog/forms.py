@@ -22,12 +22,12 @@ class CustomUserCreationForm(UserCreationForm):
 class PostCreationForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ("title", "content")
+        fields = ("title", "content", 'tags')
 
 class PostUpdateForm(forms.ModelForm):
     class Meta:
         model = Post
-        field = ("title", "content")
+        field = ("title", "content", 'tags')
 
 class CommentForm(forms.ModelForm):
     class Meta:
