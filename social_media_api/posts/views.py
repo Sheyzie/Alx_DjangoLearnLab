@@ -1,8 +1,9 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, authentication, filters
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from notifications.utils import create_notification
 
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
 
 
@@ -16,6 +17,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'content']
@@ -26,6 +28,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentSerializer
+    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
@@ -33,9 +36,40 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 # view to generate feeds based on user followed
 @api_view(['GET'])
+@authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def user_feed(request):
     following_users = request.user.following.all()
     posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
+
+# view to like post
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def like_post(request, pk):
+    post = Post.objects.filter(pk=pk).first()
+    if not post:
+        return Response({"error": "Post not found."}, status=404)
+
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    if not created:
+        return Response({"detail": "Already liked."}, status=400)
+
+    if post.author != request.user:
+        create_notification(recipient=post.author, actor=request.user, verb='liked', target=post)
+
+    return Response({"detail": "Post liked."})
+
+# view to unlike a post
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def unlike_post(request, pk):
+    like = Like.objects.filter(user=request.user, post_id=pk).first()
+    if not like:
+        return Response({"detail": "You haven't liked this post."}, status=400)
+    
+    like.delete()
+    return Response({"detail": "Post unliked."})

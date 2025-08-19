@@ -51,6 +51,7 @@ class UserProfileView(generics.RetrieveAPIView):
     
 class FollowAPIView(generics.GenericAPIView):
     queryset = CustomUser.objects.all()
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
@@ -68,6 +69,7 @@ class FollowAPIView(generics.GenericAPIView):
 class UnfollowAPIView(generics.GenericAPIView):
     queryset = CustomUser.objects.all()
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request, user_id):
         target_user = get_object_or_404(CustomUser, id=user_id)

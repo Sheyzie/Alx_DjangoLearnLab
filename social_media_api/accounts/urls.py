@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import UserCreateAPIView, LoginView, LogoutView, UserProfileView, follow_user, unfollow_user
+from .views import UserCreateAPIView, LoginView, LogoutView, UserProfileView, FollowAPIView, UnfollowAPIView
 
 
 urlpatterns = [
@@ -8,6 +8,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='api_login'),
     path('logout/', LogoutView.as_view(), name='api_logout'),
     path('profile/', UserProfileView.as_view(), name='profile'),
-    path('follow/<int:user_id>/', follow_user, name='follow_user'),
-    path('unfollow/<int:user_id>/', unfollow_user, name='unfollow_user'),
+    path('follow/<int:user_id>/', FollowAPIView.as_view(), name='follow_user'),
+    path('unfollow/<int:user_id>/', UnfollowAPIView.as_view(), name='unfollow_user'),
 ]
