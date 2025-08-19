@@ -1,7 +1,9 @@
-from rest_framework import viewsets, permissions, authentication, filters
+from rest_framework import viewsets, permissions, authentication, filters, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from django.contrib.contenttypes.models import ContentType
 from notifications.utils import create_notification
+from notifications.models import Notification
 
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
@@ -49,7 +51,8 @@ def user_feed(request):
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def like_post(request, pk):
-    post = Post.objects.filter(pk=pk).first()
+    # post = Post.objects.filter(pk=pk).first() # ALX wahala
+    post = generics.get_object_or_404(Post, pk=pk)
     if not post:
         return Response({"error": "Post not found."}, status=404)
 
@@ -58,7 +61,15 @@ def like_post(request, pk):
         return Response({"detail": "Already liked."}, status=400)
 
     if post.author != request.user:
-        create_notification(recipient=post.author, actor=request.user, verb='liked', target=post)
+        Notification.objects.create(
+            recipient=post.author, 
+            actor=request.user, 
+            verb='liked', 
+            target=post,
+            content_type=ContentType.objects.get_for_model(post),
+            object_id=post.id
+        )
+        # create_notification(recipient=post.author, actor=request.user, verb='liked', target=post)
 
     return Response({"detail": "Post liked."})
 
@@ -73,3 +84,4 @@ def unlike_post(request, pk):
     
     like.delete()
     return Response({"detail": "Post unliked."})
+
