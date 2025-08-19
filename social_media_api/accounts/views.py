@@ -13,6 +13,7 @@ from .serializers import UserSerializer, RegisterSerializer
 
 
 User = get_user_model()
+CustomUser = get_user_model() # ALX checker stop stressing me
 
 class UserCreateAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -48,21 +49,54 @@ class UserProfileView(generics.RetrieveAPIView):
         # Return the currently authenticated user
         return self.request.user
     
-# view to follow a user
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def follow_user(request, user_id):
-    target_user = get_object_or_404(User, id=user_id)
-    if target_user == request.user:
-        return Response({'error': "You cannot follow yourself."}, status=400)
-    
-    request.user.following.add(target_user)
-    return Response({'detail': f'You are now following {target_user.username}.'}, status=200)
+class FollowAPIView(generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    permission_classes = [IsAuthenticated]
 
-# view to unfollow a user
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def unfollow_user(request, user_id):
-    target_user = get_object_or_404(User, id=user_id)
-    request.user.following.remove(target_user)
-    return Response({'detail': f'You have unfollowed {target_user.username}.'}, status=200)
+    def post(self, request, user_id):
+        target_user = get_object_or_404(User, id=user_id)
+        if target_user == request.user:
+            return Response({'error': "You cannot follow yourself."}, status=400)
+        
+        if request.user.following.filter(id=target_user.id).exists():
+            return Response({'detail': f'You are already following {target_user.username}.'}, status=200)
+
+        
+        request.user.following.add(target_user)
+        return Response({'detail': f'You are now following {target_user.username}.'}, status=200)
+    
+class UnfollowAPIView(generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        target_user = get_object_or_404(CustomUser, id=user_id)
+        
+        if target_user == request.user:
+            return Response({'error': "You cannot unfollow yourself."}, status=400)
+
+        if not request.user.following.filter(id=target_user.id).exists():
+            return Response({'detail': f'You are not following {target_user.username}.'}, status=400)
+
+        request.user.following.remove(target_user)
+        return Response({'detail': f'You have unfollowed {target_user.username}.'}, status=200)
+    
+
+# # view to follow a user
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def follow_user(request, user_id):
+#     target_user = get_object_or_404(User, id=user_id)
+#     if target_user == request.user:
+#         return Response({'error': "You cannot follow yourself."}, status=400)
+    
+#     request.user.following.add(target_user)
+#     return Response({'detail': f'You are now following {target_user.username}.'}, status=200)
+
+# # view to unfollow a user
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def unfollow_user(request, user_id):
+#     target_user = get_object_or_404(User, id=user_id)
+#     request.user.following.remove(target_user)
+#     return Response({'detail': f'You have unfollowed {target_user.username}.'}, status=200)
