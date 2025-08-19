@@ -6,16 +6,14 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 
-
-
-from .serializers import UserSerializer
+from .serializers import UserSerializer, RegisterSerializer
 
 
 User = get_user_model()
 
 class UserCreateAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = RegisterSerializer
 
 class LoginView(APIView):
     def post(self, request):
