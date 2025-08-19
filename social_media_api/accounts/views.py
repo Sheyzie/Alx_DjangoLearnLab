@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -51,7 +51,7 @@ class UserProfileView(generics.RetrieveAPIView):
     
 class FollowAPIView(generics.GenericAPIView):
     queryset = CustomUser.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
         target_user = get_object_or_404(User, id=user_id)
@@ -67,11 +67,11 @@ class FollowAPIView(generics.GenericAPIView):
     
 class UnfollowAPIView(generics.GenericAPIView):
     queryset = CustomUser.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
         target_user = get_object_or_404(CustomUser, id=user_id)
-        
+
         if target_user == request.user:
             return Response({'error': "You cannot unfollow yourself."}, status=400)
 
