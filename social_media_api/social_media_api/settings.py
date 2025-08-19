@@ -31,15 +31,21 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # installed frameworks
     'rest_framework',
-    'accounts',
     'rest_framework.authtoken',
+
+    # installed apps
+    'accounts',
+    'posts',
 ]
 
 MIDDLEWARE = [
@@ -124,11 +130,27 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Rest Framwork Authentication Setup
+# Rest Framwork Setup
 REST_FRAMEWORK = {
+    # Authentication Setup
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    # Pagination Setup
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  # Customize page size
+    # Search Filter Setup
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+
 }
 
+# setup to documente API using DRF’s built-in schema + Swagger or Redoc.
+# pip install drf-spectacular
+REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
+
+# Custome User Model
 AUTH_USER_MODEL = 'accounts.user'
